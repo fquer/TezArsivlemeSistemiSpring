@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Set;
+
 @Entity
 @Data
 @Table(name="user")
@@ -15,4 +17,6 @@ public class User {
     private String userSurname;
     private String userMail;
     private String userPassword;
+    @OneToMany(mappedBy = "user")
+    private Set<File> files;
 }

@@ -1,6 +1,10 @@
 package com.fquer.TezArsivlemeSistemi.service;
 
+import com.fquer.TezArsivlemeSistemi.model.File;
 import com.fquer.TezArsivlemeSistemi.model.LoadFile;
+import com.fquer.TezArsivlemeSistemi.model.User;
+import com.fquer.TezArsivlemeSistemi.repository.FileRepository;
+import com.fquer.TezArsivlemeSistemi.repository.UserRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -20,17 +24,25 @@ public class FileService {
 
     @Autowired
     private GridFsTemplate template;
-
+    @Autowired
+    private FileRepository fileRepository;
+    @Autowired
+    private UserService userService;
     @Autowired
     private GridFsOperations operations;
 
-    public String addFile(MultipartFile upload) throws IOException {
+    public String addFile(MultipartFile upload, String userId) throws IOException {
 
         DBObject metadata = new BasicDBObject();
         metadata.put("fileSize", upload.getSize());
 
         Object fileID = template.store(upload.getInputStream(), upload.getOriginalFilename(), upload.getContentType(), metadata);
-
+        User user = userService.getUserById(userId);
+        File file = new File();
+        file.setFileName(upload.getOriginalFilename());
+        file.setFileId(fileID.toString());
+        file.setUser(user);
+        fileRepository.save(file);
         return fileID.toString();
     }
 
