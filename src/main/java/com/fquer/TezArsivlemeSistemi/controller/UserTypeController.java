@@ -1,9 +1,8 @@
 package com.fquer.TezArsivlemeSistemi.controller;
 
 import com.fquer.TezArsivlemeSistemi.dto.UserDto;
-import com.fquer.TezArsivlemeSistemi.model.User;
-import com.fquer.TezArsivlemeSistemi.request.UserRequest;
-import com.fquer.TezArsivlemeSistemi.service.UserService;
+import com.fquer.TezArsivlemeSistemi.model.UserType;
+import com.fquer.TezArsivlemeSistemi.service.UserTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,22 +11,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/userType")
 @CrossOrigin
-public class UserController {
+public class UserTypeController {
 
     @Autowired
-    private UserService userService;
+    private UserTypeService userTypeService;
 
     @GetMapping(value = "/getAll")
-    public List<UserDto> getAllUser() {
-        return userService.getAllUsers().stream().map(user -> new UserDto(user)).toList();
+    public List<UserType> getAllUserTypes() {
+        return userTypeService.getAllUserTypes();
     }
 
     @PostMapping(value = "/add")
-    public ResponseEntity<Void> createUser(@RequestBody UserRequest newUserRequest) {
-        User user = userService.createUser(newUserRequest);
-        if (user != null) {
+    public ResponseEntity<Void> createUserType(@RequestBody UserType newUserType) {
+        UserType userType = userTypeService.createUserType(newUserType);
+        if (userType != null) {
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

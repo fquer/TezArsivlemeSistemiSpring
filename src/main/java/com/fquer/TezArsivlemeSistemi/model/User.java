@@ -1,6 +1,7 @@
 package com.fquer.TezArsivlemeSistemi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fquer.TezArsivlemeSistemi.request.UserRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,6 +17,8 @@ public class User {
     private String userName;
     private String userSurname;
     private String userMail;
+    @OneToOne
+    private UserType userType;
     private String userPassword;
     @OneToMany(mappedBy = "user")
     private Set<File> files;
