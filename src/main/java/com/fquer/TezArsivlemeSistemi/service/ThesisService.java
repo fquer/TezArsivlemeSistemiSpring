@@ -24,24 +24,13 @@ public class ThesisService {
     @Autowired
     private ThesisTypeService thesisTypeService;
     @Autowired
-    private UserService userService;
-    @Autowired
-    private GridFsTemplate template;
+    private FileService fileService;
 
     public ResponseEntity<List<Thesis>> getAllTheses() {
         return new ResponseEntity<>(thesisRepository.findAll(), HttpStatus.OK);
     }
     public ResponseEntity<String> createThesis(ThesisCreateRequest thesisCreateRequest) throws IOException {
-        DBObject metadata = new BasicDBObject();
-        metadata.put("fileSize", thesisCreateRequest.getThesisFile().getSize());
-        Object fileID = template.store(thesisCreateRequest.getThesisFile().getInputStream(), thesisCreateRequest.getThesisFile().getOriginalFilename(), thesisCreateRequest.getThesisFile().getContentType(), metadata);
-
-        User user = userService.getUserById(thesisCreateRequest.getUserId());
-
-        File file = new File();
-        file.setFileName(thesisCreateRequest.getThesisFile().getOriginalFilename());
-        file.setFileId(fileID.toString());
-        file.setUser(user);
+        File file = fileService.addFile(thesisCreateRequest.getThesisFile(), thesisCreateRequest.getUserId());
 
         Thesis newThesis = new Thesis();
         newThesis.setThesisTitle(thesisCreateRequest.getThesisTitle());
@@ -49,7 +38,7 @@ public class ThesisService {
         newThesis.setThesisType(thesisTypeService.getThesisTypeById(thesisCreateRequest.getThesisTypeId()));
         newThesis.setThesisFile(file);
 
-        Thesis thesis = thesisRepository.save(newThesis);
-        return new ResponseEntity<>(fileID.toString(), HttpStatus.OK);
+        thesisRepository.save(newThesis);
+        return new ResponseEntity<>(file.getFileId(), HttpStatus.OK);
     }
 }

@@ -4,7 +4,6 @@ import com.fquer.TezArsivlemeSistemi.model.File;
 import com.fquer.TezArsivlemeSistemi.model.LoadFile;
 import com.fquer.TezArsivlemeSistemi.model.User;
 import com.fquer.TezArsivlemeSistemi.repository.FileRepository;
-import com.fquer.TezArsivlemeSistemi.repository.UserRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -31,7 +30,7 @@ public class FileService {
     @Autowired
     private GridFsOperations operations;
 
-    public String addFile(MultipartFile upload, String userId) throws IOException {
+    public File addFile(MultipartFile upload, String userId) throws IOException {
 
         DBObject metadata = new BasicDBObject();
         metadata.put("fileSize", upload.getSize());
@@ -42,8 +41,7 @@ public class FileService {
         file.setFileName(upload.getOriginalFilename());
         file.setFileId(fileID.toString());
         file.setUser(user);
-        fileRepository.save(file);
-        return fileID.toString();
+        return fileRepository.save(file);
     }
 
 

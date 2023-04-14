@@ -15,5 +15,6 @@ public class Thesis {
     @OneToOne
     private ThesisType thesisType;
     @OneToOne
+    @JoinColumn(name = "thesisFileId", nullable = false)
     private File thesisFile;
 }
