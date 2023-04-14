@@ -2,6 +2,7 @@ package com.fquer.TezArsivlemeSistemi.controller;
 
 import com.fquer.TezArsivlemeSistemi.dto.UserDto;
 import com.fquer.TezArsivlemeSistemi.model.User;
+import com.fquer.TezArsivlemeSistemi.request.UserLoginRequest;
 import com.fquer.TezArsivlemeSistemi.request.UserRequest;
 import com.fquer.TezArsivlemeSistemi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,11 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @PostMapping(value = "/login")
+    public ResponseEntity<UserDto> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
+        return userService.checkUserLogin(userLoginRequest);
     }
 
 }

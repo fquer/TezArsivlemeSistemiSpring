@@ -3,18 +3,17 @@ package com.fquer.TezArsivlemeSistemi.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-
 @Entity
 @Data
-@Table(name="user")
-public class User {
+@Table(name="thesis")
+public class Thesis {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private String id;
-    private String userName;
-    private String userSurname;
-    private String userMail;
+    private String thesisTitle;
+    private String thesisTopic;
     @OneToOne
-    private UserType userType;
-    private String userPassword;
+    private ThesisType thesisType;
+    @OneToOne
+    private File thesisFile;
 }
