@@ -35,6 +35,12 @@ public class ThesisService {
         Thesis newThesis = new Thesis();
         newThesis.setThesisTitle(thesisCreateRequest.getThesisTitle());
         newThesis.setThesisTopic(thesisCreateRequest.getThesisTopic());
+        newThesis.setThesisLanguage(thesisCreateRequest.getThesisLanguage());
+        newThesis.setThesisGroup(thesisCreateRequest.getThesisGroup());
+        newThesis.setThesisUniversity(thesisCreateRequest.getThesisUniversity());
+        newThesis.setThesisInstitute(thesisCreateRequest.getThesisInstitute());
+        newThesis.setThesisMainField(thesisCreateRequest.getThesisMainField());
+        newThesis.setThesisChildrenField(thesisCreateRequest.getThesisChildrenField());
         newThesis.setThesisType(thesisTypeService.getThesisTypeById(thesisCreateRequest.getThesisTypeId()));
         newThesis.setThesisFile(file);
 
