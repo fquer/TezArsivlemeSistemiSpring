@@ -1,8 +1,8 @@
-package com.fquer.TezArsivlemeSistemi.service;
+package com.fquer.TezArsivlemeSistemi.service.thesisDetail;
 
 import com.fquer.TezArsivlemeSistemi.exception.NotFoundException;
-import com.fquer.TezArsivlemeSistemi.model.ThesisType;
-import com.fquer.TezArsivlemeSistemi.repository.ThesisTypeRepository;
+import com.fquer.TezArsivlemeSistemi.model.thesisDetail.ThesisType;
+import com.fquer.TezArsivlemeSistemi.repository.thesisDetail.ThesisTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.fquer.TezArsivlemeSistemi.model;
+package com.fquer.TezArsivlemeSistemi.model.thesisDetail;
 
 import jakarta.persistence.*;
 import lombok.Data;

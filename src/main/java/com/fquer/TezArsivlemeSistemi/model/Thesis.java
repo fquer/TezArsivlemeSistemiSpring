@@ -1,5 +1,6 @@
 package com.fquer.TezArsivlemeSistemi.model;
 
+import com.fquer.TezArsivlemeSistemi.model.thesisDetail.ThesisType;
 import jakarta.persistence.*;
 import lombok.Data;
 

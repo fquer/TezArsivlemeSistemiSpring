@@ -2,13 +2,10 @@ package com.fquer.TezArsivlemeSistemi.service;
 
 import com.fquer.TezArsivlemeSistemi.model.File;
 import com.fquer.TezArsivlemeSistemi.model.Thesis;
-import com.fquer.TezArsivlemeSistemi.model.User;
 import com.fquer.TezArsivlemeSistemi.repository.ThesisRepository;
 import com.fquer.TezArsivlemeSistemi.request.ThesisCreateRequest;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import com.fquer.TezArsivlemeSistemi.service.thesisDetail.ThesisTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
