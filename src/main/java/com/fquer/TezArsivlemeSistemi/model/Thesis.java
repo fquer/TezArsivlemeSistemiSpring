@@ -1,6 +1,6 @@
 package com.fquer.TezArsivlemeSistemi.model;
 
-import com.fquer.TezArsivlemeSistemi.model.thesisDetail.ThesisType;
+import com.fquer.TezArsivlemeSistemi.model.thesisDetail.*;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,12 +13,18 @@ public class Thesis {
     private String id;
     private String thesisTitle;
     private String thesisTopic;
-    private String thesisLanguage;
-    private String thesisGroup;
-    private String thesisUniversity;
-    private String thesisInstitute;
-    private String thesisMainField;
-    private String thesisChildrenField;
+    @OneToOne
+    private ThesisLanguage thesisLanguage;
+    @OneToOne
+    private ThesisGroup thesisGroup;
+    @OneToOne
+    private ThesisUniversity thesisUniversity;
+    @OneToOne
+    private ThesisInstitute thesisInstitute;
+    @OneToOne
+    private ThesisMainField thesisMainField;
+    @OneToOne
+    private ThesisChildrenField thesisChildrenField;
     @OneToOne
     private ThesisType thesisType;
     @OneToOne

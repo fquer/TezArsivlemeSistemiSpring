@@ -1,5 +1,6 @@
 package com.fquer.TezArsivlemeSistemi.controller;
 
+import com.fquer.TezArsivlemeSistemi.dto.ThesisDto;
 import com.fquer.TezArsivlemeSistemi.model.Thesis;
 import com.fquer.TezArsivlemeSistemi.request.ThesisCreateRequest;
 import com.fquer.TezArsivlemeSistemi.service.ThesisService;
@@ -19,7 +20,7 @@ public class ThesisController {
     private ThesisService thesisService;
 
     @GetMapping(value = "/getAll")
-    public ResponseEntity<List<Thesis>> getAllTheses() {
+    public ResponseEntity<List<ThesisDto>> getAllTheses() {
         return thesisService.getAllTheses();
     }
 

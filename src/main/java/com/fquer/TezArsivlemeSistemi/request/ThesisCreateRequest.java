@@ -13,7 +13,7 @@ public class ThesisCreateRequest {
     private String thesisInstitute;
     private String thesisMainField;
     private String thesisChildrenField;
-    private String thesisTypeId;
+    private String thesisType;
     private MultipartFile thesisFile;
     private String userId;
 }
