@@ -7,15 +7,29 @@ import com.fquer.TezArsivlemeSistemi.repository.FileRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.commons.io.IOUtils;
+
+import javax.imageio.ImageIO;
 
 
 @Service
@@ -32,6 +46,19 @@ public class FileService {
 
     public File addFile(MultipartFile upload, String userId) throws IOException {
 
+        PDDocument document = PDDocument.load(upload.getBytes());
+        PDFRenderer pdfRenderer = new PDFRenderer(document);
+        BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(0, 25);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "jpg", baos);
+        byte[] imageBytes = baos.toByteArray();
+
+        document.close();
+
+        InputStream inputStream = new ByteArrayInputStream(imageBytes);
+        Object previewImageID = template.store(inputStream,upload.getOriginalFilename() + "_preview.jpg");
+
         DBObject metadata = new BasicDBObject();
         metadata.put("fileSize", upload.getSize());
 
@@ -40,12 +67,13 @@ public class FileService {
         File file = new File();
         file.setFileName(upload.getOriginalFilename());
         file.setFileId(fileID.toString());
+        file.setPreviewImageId(previewImageID.toString());
         file.setUser(user);
         return fileRepository.save(file);
     }
 
 
-    public LoadFile downloadFile(String id) throws IOException {
+    public ResponseEntity<ByteArrayResource> getFile(String id) throws IOException {
 
         GridFSFile gridFSFile = template.findOne( new Query(Criteria.where("_id").is(id)) );
 
@@ -61,7 +89,27 @@ public class FileService {
             loadFile.setFile( IOUtils.toByteArray(operations.getResource(gridFSFile).getInputStream()) );
         }
 
-        return loadFile;
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(loadFile.getFileType() ))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + loadFile.getFilename() + "\"")
+                .body(new ByteArrayResource(loadFile.getFile()));
+    }
+
+    public ResponseEntity<ByteArrayResource> getPreviewImage(String id) throws IOException {
+        GridFSFile gridFSFile = template.findOne( new Query(Criteria.where("_id").is(id)) );
+
+        byte[] imageBytes = operations.getResource(gridFSFile).getContentAsByteArray();
+
+        ByteArrayResource resource = new ByteArrayResource(imageBytes);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(imageBytes.length)
+                .body(resource);
     }
 
 }

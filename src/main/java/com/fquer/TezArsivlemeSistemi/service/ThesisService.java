@@ -5,6 +5,7 @@ import com.fquer.TezArsivlemeSistemi.model.File;
 import com.fquer.TezArsivlemeSistemi.model.Thesis;
 import com.fquer.TezArsivlemeSistemi.repository.ThesisRepository;
 import com.fquer.TezArsivlemeSistemi.request.ThesisCreateRequest;
+import com.fquer.TezArsivlemeSistemi.request.ThesisGetAllByUserIdRequest;
 import com.fquer.TezArsivlemeSistemi.service.thesisDetail.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,5 +59,9 @@ public class ThesisService {
 
         thesisRepository.save(newThesis);
         return new ResponseEntity<>(file.getFileId(), HttpStatus.OK);
+    }
+
+    public ResponseEntity<List<ThesisDto>> getAllThesesByUserId(String userId) {
+        return new ResponseEntity<>(thesisRepository.findAllByThesisFileUserId(userId).stream().map(thesis -> new ThesisDto(thesis)).collect(Collectors.toList()), HttpStatus.OK);
     }
 }

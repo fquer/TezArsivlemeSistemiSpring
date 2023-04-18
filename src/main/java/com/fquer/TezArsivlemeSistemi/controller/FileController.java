@@ -22,18 +22,18 @@ public class FileController {
     private FileService fileService;
 
     @PostMapping("/upload")
-    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("userId") String userId) throws IOException {
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("userId") String userId) throws IOException {
         return new ResponseEntity<>(fileService.addFile(file, userId), HttpStatus.OK);
     }
 
-    @GetMapping("/download/{id}")
-    public ResponseEntity<ByteArrayResource> download(@PathVariable String id) throws IOException {
-        LoadFile loadFile = fileService.downloadFile(id);
+    @GetMapping("/download/file/{id}")
+    public ResponseEntity<ByteArrayResource> getFile(@PathVariable String id) throws IOException {
+        return fileService.getFile(id);
+    }
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(loadFile.getFileType() ))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + loadFile.getFilename() + "\"")
-                .body(new ByteArrayResource(loadFile.getFile()));
+    @GetMapping("/download/preview/{id}")
+    public ResponseEntity<ByteArrayResource> getPreviewImage(@PathVariable String id) throws IOException {
+        return fileService.getPreviewImage(id);
     }
 
 }

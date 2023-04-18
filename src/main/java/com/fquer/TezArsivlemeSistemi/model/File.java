@@ -12,6 +12,7 @@ public class File {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private String id;
     private String fileId;
+    private String previewImageId;
     private String fileName;
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)

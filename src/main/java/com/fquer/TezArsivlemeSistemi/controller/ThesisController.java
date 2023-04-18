@@ -3,6 +3,7 @@ package com.fquer.TezArsivlemeSistemi.controller;
 import com.fquer.TezArsivlemeSistemi.dto.ThesisDto;
 import com.fquer.TezArsivlemeSistemi.model.Thesis;
 import com.fquer.TezArsivlemeSistemi.request.ThesisCreateRequest;
+import com.fquer.TezArsivlemeSistemi.request.ThesisGetAllByUserIdRequest;
 import com.fquer.TezArsivlemeSistemi.service.ThesisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +28,10 @@ public class ThesisController {
     @PostMapping(value = "/add")
     public ResponseEntity<String> createThesis(@ModelAttribute ThesisCreateRequest thesisCreateRequest) throws IOException {
         return thesisService.createThesis(thesisCreateRequest);
+    }
+
+    @GetMapping(value = "/getAllByUserId/{userId}")
+    public ResponseEntity<List<ThesisDto>> getAllThesesByUserId(@PathVariable("userId") String userId) {
+        return thesisService.getAllThesesByUserId(userId);
     }
 }

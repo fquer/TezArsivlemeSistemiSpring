@@ -41,10 +41,10 @@ public class UserService {
     }
 
     public ResponseEntity<UserDto> checkUserLogin(UserLoginRequest userLoginRequest) {
-        UserDto user = new UserDto(userRepository.findByUserMailAndUserPassword(userLoginRequest.getUserMail(), userLoginRequest.getUserPassword()));
-        if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
+        User foundUser = userRepository.findByUserMailAndUserPassword(userLoginRequest.getUserMail(), userLoginRequest.getUserPassword());
+        if (foundUser != null) {
+            return new ResponseEntity<>(new UserDto(foundUser), HttpStatus.OK);
         }
-        return new ResponseEntity<>(user, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
     }
 }
