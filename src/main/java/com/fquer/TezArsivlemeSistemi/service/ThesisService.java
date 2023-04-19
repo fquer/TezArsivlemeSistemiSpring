@@ -1,11 +1,11 @@
 package com.fquer.TezArsivlemeSistemi.service;
 
 import com.fquer.TezArsivlemeSistemi.dto.ThesisDto;
+import com.fquer.TezArsivlemeSistemi.exception.NotFoundException;
 import com.fquer.TezArsivlemeSistemi.model.File;
 import com.fquer.TezArsivlemeSistemi.model.Thesis;
 import com.fquer.TezArsivlemeSistemi.repository.ThesisRepository;
 import com.fquer.TezArsivlemeSistemi.request.ThesisCreateRequest;
-import com.fquer.TezArsivlemeSistemi.request.ThesisGetAllByUserIdRequest;
 import com.fquer.TezArsivlemeSistemi.service.thesisDetail.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,8 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +43,7 @@ public class ThesisService {
         return new ResponseEntity<>(thesisRepository.findAll().stream().map(thesis -> new ThesisDto(thesis)).collect(Collectors.toList()), HttpStatus.OK);
     }
     public ResponseEntity<String> createThesis(ThesisCreateRequest thesisCreateRequest) throws IOException {
-        File file = fileService.addFile(thesisCreateRequest.getThesisFile(), thesisCreateRequest.getUserId());
+        File file = fileService.uploadFile(thesisCreateRequest.getThesisFile(), thesisCreateRequest.getUserId());
 
         Thesis newThesis = new Thesis();
         newThesis.setThesisTitle(thesisCreateRequest.getThesisTitle());
@@ -63,5 +63,18 @@ public class ThesisService {
 
     public ResponseEntity<List<ThesisDto>> getAllThesesByUserId(String userId) {
         return new ResponseEntity<>(thesisRepository.findAllByThesisFileUserId(userId).stream().map(thesis -> new ThesisDto(thesis)).collect(Collectors.toList()), HttpStatus.OK);
+    }
+
+    public ResponseEntity<Void> deleteThesis(String id) {
+        if (thesisRepository.existsById(id)) {
+            Thesis thesis = thesisRepository.findById(id).orElseThrow(()->new NotFoundException(id));
+            fileService.deleteFile(thesis.getThesisFile().getId(), thesis.getThesisFile().getFileId(), thesis.getThesisFile().getPreviewImageId());
+            thesisRepository.deleteThesisById(id);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

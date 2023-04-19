@@ -1,12 +1,9 @@
 package com.fquer.TezArsivlemeSistemi.controller;
 
-import com.fquer.TezArsivlemeSistemi.model.LoadFile;
 import com.fquer.TezArsivlemeSistemi.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +20,7 @@ public class FileController {
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("userId") String userId) throws IOException {
-        return new ResponseEntity<>(fileService.addFile(file, userId), HttpStatus.OK);
+        return new ResponseEntity<>(fileService.uploadFile(file, userId), HttpStatus.OK);
     }
 
     @GetMapping("/download/file/{id}")

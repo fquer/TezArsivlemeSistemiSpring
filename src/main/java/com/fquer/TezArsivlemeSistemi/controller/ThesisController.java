@@ -34,4 +34,9 @@ public class ThesisController {
     public ResponseEntity<List<ThesisDto>> getAllThesesByUserId(@PathVariable("userId") String userId) {
         return thesisService.getAllThesesByUserId(userId);
     }
+
+    @DeleteMapping("/{thesisId}")
+    public ResponseEntity<Void> deleteThesis(@PathVariable String thesisId) {
+        return thesisService.deleteThesis(thesisId);
+    }
 }

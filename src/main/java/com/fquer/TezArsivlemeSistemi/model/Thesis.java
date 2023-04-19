@@ -3,6 +3,8 @@ package com.fquer.TezArsivlemeSistemi.model;
 import com.fquer.TezArsivlemeSistemi.model.thesisDetail.*;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Data
