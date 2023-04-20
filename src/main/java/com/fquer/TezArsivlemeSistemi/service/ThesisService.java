@@ -61,6 +61,34 @@ public class ThesisService {
         return new ResponseEntity<>(file.getFileId(), HttpStatus.OK);
     }
 
+    public ResponseEntity<Void> updateThesis(ThesisCreateRequest thesisCreateRequest, String thesisId) throws IOException {
+        Optional<Thesis> foundThesis = thesisRepository.findById(thesisId);
+
+        if (foundThesis.isPresent()) {
+            Thesis thesis = foundThesis.get();
+
+            fileService.deleteFile(thesis.getThesisFile().getId(), thesis.getThesisFile().getFileId(), thesis.getThesisFile().getPreviewImageId());
+
+            thesis.setThesisTitle(thesisCreateRequest.getThesisTitle());
+            thesis.setThesisTopic(thesisCreateRequest.getThesisTopic());
+            thesis.setThesisLanguage(thesisLanguageService.getThesisLanguageById(thesisCreateRequest.getThesisLanguage()));
+            thesis.setThesisGroup(thesisGroupService.getThesisGroupById(thesisCreateRequest.getThesisGroup()));
+            thesis.setThesisUniversity(thesisUniversityService.getThesisUniversityById(thesisCreateRequest.getThesisUniversity()));
+            thesis.setThesisInstitute(thesisInstituteService.getThesisInstituteById(thesisCreateRequest.getThesisInstitute()));
+            thesis.setThesisMainField(thesisMainFieldService.getThesisMainFieldById(thesisCreateRequest.getThesisMainField()));
+            thesis.setThesisChildrenField(thesisChildrenFieldService.getThesisChildrenFieldById(thesisCreateRequest.getThesisChildrenField()));
+            thesis.setThesisType(thesisTypeService.getThesisTypeById(thesisCreateRequest.getThesisType()));
+            File file = fileService.uploadFile(thesisCreateRequest.getThesisFile(), thesisCreateRequest.getUserId());
+            thesis.setThesisFile(file);
+
+            thesisRepository.save(thesis);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     public ResponseEntity<List<ThesisDto>> getAllThesesByUserId(String userId) {
         return new ResponseEntity<>(thesisRepository.findAllByThesisFileUserId(userId).stream().map(thesis -> new ThesisDto(thesis)).collect(Collectors.toList()), HttpStatus.OK);
     }
@@ -72,6 +100,16 @@ public class ThesisService {
             thesisRepository.deleteThesisById(id);
 
             return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseEntity<ThesisDto> getThesis(String id) {
+        if (thesisRepository.existsById(id)) {
+            Thesis thesis = thesisRepository.findById(id).orElseThrow(()->new NotFoundException(id));
+            return new ResponseEntity<>(new ThesisDto(thesis), HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -30,6 +30,11 @@ public class ThesisController {
         return thesisService.createThesis(thesisCreateRequest);
     }
 
+    @PutMapping(value = "/{thesisId}")
+    public ResponseEntity<Void> updateThesis(@ModelAttribute ThesisCreateRequest thesisCreateRequest, @PathVariable String thesisId) throws IOException {
+        return thesisService.updateThesis(thesisCreateRequest, thesisId);
+    }
+
     @GetMapping(value = "/getAllByUserId/{userId}")
     public ResponseEntity<List<ThesisDto>> getAllThesesByUserId(@PathVariable("userId") String userId) {
         return thesisService.getAllThesesByUserId(userId);
@@ -38,5 +43,10 @@ public class ThesisController {
     @DeleteMapping("/{thesisId}")
     public ResponseEntity<Void> deleteThesis(@PathVariable String thesisId) {
         return thesisService.deleteThesis(thesisId);
+    }
+
+    @GetMapping("/{thesisId}")
+    public ResponseEntity<ThesisDto> getThesis(@PathVariable String thesisId) {
+        return thesisService.getThesis(thesisId);
     }
 }
