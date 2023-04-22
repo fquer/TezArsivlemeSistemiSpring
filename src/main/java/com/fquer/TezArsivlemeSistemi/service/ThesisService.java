@@ -6,6 +6,7 @@ import com.fquer.TezArsivlemeSistemi.model.File;
 import com.fquer.TezArsivlemeSistemi.model.Thesis;
 import com.fquer.TezArsivlemeSistemi.repository.ThesisRepository;
 import com.fquer.TezArsivlemeSistemi.request.ThesisCreateRequest;
+import com.fquer.TezArsivlemeSistemi.request.ThesisUpdateRequest;
 import com.fquer.TezArsivlemeSistemi.service.thesisDetail.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,8 +68,6 @@ public class ThesisService {
         if (foundThesis.isPresent()) {
             Thesis thesis = foundThesis.get();
 
-            fileService.deleteFile(thesis.getThesisFile().getId(), thesis.getThesisFile().getFileId(), thesis.getThesisFile().getPreviewImageId());
-
             thesis.setThesisTitle(thesisCreateRequest.getThesisTitle());
             thesis.setThesisTopic(thesisCreateRequest.getThesisTopic());
             thesis.setThesisLanguage(thesisLanguageService.getThesisLanguageById(thesisCreateRequest.getThesisLanguage()));
@@ -78,8 +77,11 @@ public class ThesisService {
             thesis.setThesisMainField(thesisMainFieldService.getThesisMainFieldById(thesisCreateRequest.getThesisMainField()));
             thesis.setThesisChildrenField(thesisChildrenFieldService.getThesisChildrenFieldById(thesisCreateRequest.getThesisChildrenField()));
             thesis.setThesisType(thesisTypeService.getThesisTypeById(thesisCreateRequest.getThesisType()));
-            File file = fileService.uploadFile(thesisCreateRequest.getThesisFile(), thesisCreateRequest.getUserId());
-            thesis.setThesisFile(file);
+            if (thesisCreateRequest.getThesisFile() != null) {
+                fileService.deleteFile(thesis.getThesisFile().getId(), thesis.getThesisFile().getFileId(), thesis.getThesisFile().getPreviewImageId());
+                File file = fileService.uploadFile(thesisCreateRequest.getThesisFile(), thesisCreateRequest.getUserId());
+                thesis.setThesisFile(file);
+            }
 
             thesisRepository.save(thesis);
             return new ResponseEntity<>(HttpStatus.OK);

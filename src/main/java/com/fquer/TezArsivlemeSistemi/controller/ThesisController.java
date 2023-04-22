@@ -4,6 +4,7 @@ import com.fquer.TezArsivlemeSistemi.dto.ThesisDto;
 import com.fquer.TezArsivlemeSistemi.model.Thesis;
 import com.fquer.TezArsivlemeSistemi.request.ThesisCreateRequest;
 import com.fquer.TezArsivlemeSistemi.request.ThesisGetAllByUserIdRequest;
+import com.fquer.TezArsivlemeSistemi.request.ThesisUpdateRequest;
 import com.fquer.TezArsivlemeSistemi.service.ThesisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,6 @@ public class ThesisController {
     public ResponseEntity<Void> updateThesis(@ModelAttribute ThesisCreateRequest thesisCreateRequest, @PathVariable String thesisId) throws IOException {
         return thesisService.updateThesis(thesisCreateRequest, thesisId);
     }
-
     @GetMapping(value = "/getAllByUserId/{userId}")
     public ResponseEntity<List<ThesisDto>> getAllThesesByUserId(@PathVariable("userId") String userId) {
         return thesisService.getAllThesesByUserId(userId);
