@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 
 import org.apache.commons.io.IOUtils;
 
@@ -72,6 +73,7 @@ public class FileService {
         file.setFileId(fileID.toString());
         file.setPreviewImageId(previewImageID.toString());
         file.setUser(user);
+        file.setUploadDate(LocalDateTime.now());
         return fileRepository.save(file);
     }
 

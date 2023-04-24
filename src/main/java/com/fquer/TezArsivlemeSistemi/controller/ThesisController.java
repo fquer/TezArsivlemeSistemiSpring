@@ -49,4 +49,9 @@ public class ThesisController {
     public ResponseEntity<ThesisDto> getThesis(@PathVariable String thesisId) {
         return thesisService.getThesis(thesisId);
     }
+
+    @GetMapping("/getLast")
+    public ResponseEntity<List<ThesisDto>> getLastCountThesis() {
+        return thesisService.getLastCountThesis();
+    }
 }

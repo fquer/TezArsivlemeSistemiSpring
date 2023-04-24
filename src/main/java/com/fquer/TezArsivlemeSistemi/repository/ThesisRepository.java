@@ -8,4 +8,5 @@ import java.util.List;
 public interface ThesisRepository extends MongoRepository<Thesis, String> {
     List<Thesis> findAllByThesisFileUserId(String userId);
     void deleteThesisById(String id);
+    List<Thesis> findTop5ByOrderByThesisFileUploadDateDesc();
 }

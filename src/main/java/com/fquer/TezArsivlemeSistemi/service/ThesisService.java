@@ -117,4 +117,9 @@ public class ThesisService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    public ResponseEntity<List<ThesisDto>> getLastCountThesis() {
+        List<ThesisDto> foundedTheses = thesisRepository.findTop5ByOrderByThesisFileUploadDateDesc().stream().map(thesis -> new ThesisDto(thesis)).collect(Collectors.toList());
+        return new ResponseEntity<>(foundedTheses, HttpStatus.OK);
+    }
 }
