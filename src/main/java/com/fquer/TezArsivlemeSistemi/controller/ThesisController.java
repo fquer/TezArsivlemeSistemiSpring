@@ -1,10 +1,8 @@
 package com.fquer.TezArsivlemeSistemi.controller;
 
 import com.fquer.TezArsivlemeSistemi.dto.ThesisDto;
-import com.fquer.TezArsivlemeSistemi.model.Thesis;
 import com.fquer.TezArsivlemeSistemi.request.ThesisCreateRequest;
-import com.fquer.TezArsivlemeSistemi.request.ThesisGetAllByUserIdRequest;
-import com.fquer.TezArsivlemeSistemi.request.ThesisUpdateRequest;
+import com.fquer.TezArsivlemeSistemi.request.ThesisSearchRequest;
 import com.fquer.TezArsivlemeSistemi.service.ThesisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,5 +51,10 @@ public class ThesisController {
     @GetMapping("/getLast")
     public ResponseEntity<List<ThesisDto>> getLastCountThesis() {
         return thesisService.getLastCountThesis();
+    }
+
+    @PostMapping("/findThesis")
+    public ResponseEntity<List<ThesisDto>> getLastCountThesis(@RequestBody ThesisSearchRequest thesisSearchRequest) {
+        return thesisService.searchThesis(thesisSearchRequest);
     }
 }

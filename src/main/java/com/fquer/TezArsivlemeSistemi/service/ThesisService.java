@@ -6,15 +6,19 @@ import com.fquer.TezArsivlemeSistemi.model.File;
 import com.fquer.TezArsivlemeSistemi.model.Thesis;
 import com.fquer.TezArsivlemeSistemi.repository.ThesisRepository;
 import com.fquer.TezArsivlemeSistemi.request.ThesisCreateRequest;
-import com.fquer.TezArsivlemeSistemi.request.ThesisUpdateRequest;
+import com.fquer.TezArsivlemeSistemi.request.ThesisSearchRequest;
 import com.fquer.TezArsivlemeSistemi.service.thesisDetail.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,6 +43,8 @@ public class ThesisService {
     private ThesisChildrenFieldService thesisChildrenFieldService;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public ResponseEntity<List<ThesisDto>> getAllTheses() {
         return new ResponseEntity<>(thesisRepository.findAll().stream().map(thesis -> new ThesisDto(thesis)).collect(Collectors.toList()), HttpStatus.OK);
@@ -121,5 +127,44 @@ public class ThesisService {
     public ResponseEntity<List<ThesisDto>> getLastCountThesis() {
         List<ThesisDto> foundedTheses = thesisRepository.findTop5ByOrderByThesisFileUploadDateDesc().stream().map(thesis -> new ThesisDto(thesis)).collect(Collectors.toList());
         return new ResponseEntity<>(foundedTheses, HttpStatus.OK);
+    }
+
+    public ResponseEntity<List<ThesisDto>> searchThesis(ThesisSearchRequest thesisSearchRequest) {
+        Criteria criteria = new Criteria();
+
+        if (!Objects.equals(thesisSearchRequest.getThesisTitle(), "")) {
+            criteria.and("thesisTitle").regex(thesisSearchRequest.getThesisTitle());
+        }
+        if (!Objects.equals(thesisSearchRequest.getThesisTopic(), "")) {
+            criteria.and("thesisTopic").regex(thesisSearchRequest.getThesisTopic());
+        }
+        if (!Objects.equals(thesisSearchRequest.getThesisLanguage(), "")) {
+            criteria.and("thesisLanguageId").is(thesisSearchRequest.getThesisLanguage());
+        }
+        if (!Objects.equals(thesisSearchRequest.getThesisGroup(), "")) {
+            criteria.and("thesisGroupId").is(thesisSearchRequest.getThesisGroup());
+        }
+        if (!Objects.equals(thesisSearchRequest.getThesisUniversity(), "")) {
+            criteria.and("thesisUniversityId").is(thesisSearchRequest.getThesisUniversity());
+        }
+        if (!Objects.equals(thesisSearchRequest.getThesisInstitute(), "")) {
+            criteria.and("thesisInstituteId").is(thesisSearchRequest.getThesisInstitute());
+        }
+        if (!Objects.equals(thesisSearchRequest.getThesisMainField(), "")) {
+            criteria.and("thesisMainFieldId").is(thesisSearchRequest.getThesisMainField());
+        }
+        if (!Objects.equals(thesisSearchRequest.getThesisChildrenField(), "")) {
+            criteria.and("thesisChildrenFieldId").is(thesisSearchRequest.getThesisChildrenField());
+        }
+        if (!Objects.equals(thesisSearchRequest.getThesisType(), "")) {
+            criteria.and("thesisTypeId").is(thesisSearchRequest.getThesisType());
+        }
+
+        Query query = new Query(criteria);
+
+        List<Thesis> thesisList = mongoTemplate.find(query, Thesis.class);
+        List<ThesisDto> thesisDtoList = thesisList.stream().map(thesis -> new ThesisDto(thesis)).collect(Collectors.toList());
+        return new ResponseEntity<>(thesisDtoList, HttpStatus.OK);
+
     }
 }
