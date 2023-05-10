@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -30,8 +31,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.imageio.ImageIO;
 
@@ -100,21 +103,31 @@ public class FileService {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDownloadDto.getFilename() + "\"")
                 .body(new ByteArrayResource(fileDownloadDto.getFile()));
     }
-
-    public ResponseEntity<ByteArrayResource> getPreviewImage(String id) throws IOException {
+    @Async
+    public ResponseEntity<StreamingResponseBody> getPreviewImage(String id) throws IOException {
         GridFSFile gridFSFile = template.findOne( new Query(Criteria.where("_id").is(id)) );
 
         byte[] imageBytes = operations.getResource(gridFSFile).getContentAsByteArray();
 
-        ByteArrayResource resource = new ByteArrayResource(imageBytes);
+        // Gzip compression
+        ByteArrayOutputStream compressedBytes = new ByteArrayOutputStream();
+        try (GZIPOutputStream gzipOut = new GZIPOutputStream(compressedBytes)) {
+            gzipOut.write(imageBytes);
+        }
+        byte[] compressedImageBytes = compressedBytes.toByteArray();
+
+        StreamingResponseBody responseBody = outputStream -> {
+            try (ByteArrayInputStream bis = new ByteArrayInputStream(compressedImageBytes)) {
+                IOUtils.copy(bis, outputStream);
+            }
+        };
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_JPEG);
+        headers.setContentLength(compressedImageBytes.length);
+        headers.set("Content-Encoding", "gzip");
 
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentLength(imageBytes.length)
-                .body(resource);
+        return new ResponseEntity<>(responseBody, headers, HttpStatus.OK);
     }
 
     public ResponseEntity<Void> deleteFile(String id, String previewImageId, String fileId) {

@@ -6,6 +6,8 @@ import com.fquer.TezArsivlemeSistemi.model.thesisDetail.*;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class ThesisDto {
     private String id;
@@ -19,6 +21,7 @@ public class ThesisDto {
     private ThesisChildrenField thesisChildrenField;
     private ThesisType thesisType;
     private FileDto thesisFile;
+    private LocalDateTime thesisUploadDate;
 
     public ThesisDto(Thesis thesis) {
         this.id = thesis.getId();
@@ -32,5 +35,6 @@ public class ThesisDto {
         this.thesisChildrenField = thesis.getThesisChildrenField();
         this.thesisType = thesis.getThesisType();
         this.thesisFile = new FileDto(thesis.getThesisFile());
+        this.thesisUploadDate = thesis.getThesisFile().getUploadDate();
     }
 }

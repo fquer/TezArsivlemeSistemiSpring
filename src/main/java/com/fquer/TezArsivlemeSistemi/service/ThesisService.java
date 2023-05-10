@@ -125,7 +125,7 @@ public class ThesisService {
     }
 
     public ResponseEntity<List<ThesisDto>> getLastCountThesis() {
-        List<ThesisDto> foundedTheses = thesisRepository.findTop5ByOrderByThesisFileUploadDateDesc().stream().map(thesis -> new ThesisDto(thesis)).collect(Collectors.toList());
+        List<ThesisDto> foundedTheses = thesisRepository.findTop4ByOrderByThesisFileUploadDateDesc().stream().map(thesis -> new ThesisDto(thesis)).collect(Collectors.toList());
         return new ResponseEntity<>(foundedTheses, HttpStatus.OK);
     }
 

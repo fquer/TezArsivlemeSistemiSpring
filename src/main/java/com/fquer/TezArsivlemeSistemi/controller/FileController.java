@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
 
@@ -29,7 +30,7 @@ public class FileController {
     }
 
     @GetMapping("/download/preview/{id}")
-    public ResponseEntity<ByteArrayResource> getPreviewImage(@PathVariable String id) throws IOException {
+    public ResponseEntity<StreamingResponseBody> getPreviewImage(@PathVariable String id) throws IOException {
         return fileService.getPreviewImage(id);
     }
 
