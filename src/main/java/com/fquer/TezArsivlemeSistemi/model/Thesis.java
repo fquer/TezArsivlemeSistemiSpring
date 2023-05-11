@@ -3,8 +3,6 @@ package com.fquer.TezArsivlemeSistemi.model;
 import com.fquer.TezArsivlemeSistemi.model.thesisDetail.*;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Data
@@ -14,7 +12,6 @@ public class Thesis {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private String id;
     private String thesisTitle;
-    private String thesisTopic;
     @OneToOne
     private ThesisLanguage thesisLanguage;
     @OneToOne
@@ -29,6 +26,7 @@ public class Thesis {
     private ThesisChildrenField thesisChildrenField;
     @OneToOne
     private ThesisType thesisType;
+    private String thesisWrittenYear;
     @OneToOne
     @JoinColumn(name = "thesisFileId", nullable = false)
     private File thesisFile;

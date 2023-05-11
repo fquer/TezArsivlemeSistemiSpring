@@ -21,15 +21,27 @@ public class UserService {
     @Autowired
     private UserTypeService userTypeService;
 
-    public User createUser(UserRequest newUserRequest) {
-        UserType userType = userTypeService.getUserTypeById(newUserRequest.getUserTypeId());
-        User newUser = new User();
-        newUser.setUserName(newUserRequest.getUserName());
-        newUser.setUserSurname(newUserRequest.getUserSurname());
-        newUser.setUserMail(newUserRequest.getUserMail());
-        newUser.setUserType(userType);
-        newUser.setUserPassword(newUserRequest.getUserPassword());
-        return userRepository.save(newUser);
+    public ResponseEntity<Void> createUser(UserRequest newUserRequest) {
+        User foundedUser = userRepository.findByUserMail(newUserRequest.getUserMail());
+        if (foundedUser != null) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        else {
+            UserType userType = userTypeService.getUserTypeById(newUserRequest.getUserTypeId());
+            User newUser = new User();
+            newUser.setUserName(newUserRequest.getUserName());
+            newUser.setUserSurname(newUserRequest.getUserSurname());
+            newUser.setUserMail(newUserRequest.getUserMail());
+            newUser.setUserType(userType);
+            newUser.setUserPassword(newUserRequest.getUserPassword());
+            User createdUser = userRepository.save(newUser);
+            if (createdUser != null) {
+                return new ResponseEntity<>(HttpStatus.CREATED);
+            }
+            else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 
     public User getUserById(String userId) {

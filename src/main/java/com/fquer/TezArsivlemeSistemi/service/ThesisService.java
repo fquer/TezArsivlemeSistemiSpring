@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,7 +55,6 @@ public class ThesisService {
 
         Thesis newThesis = new Thesis();
         newThesis.setThesisTitle(thesisCreateRequest.getThesisTitle());
-        newThesis.setThesisTopic(thesisCreateRequest.getThesisTopic());
         newThesis.setThesisLanguage(thesisLanguageService.getThesisLanguageById(thesisCreateRequest.getThesisLanguage()));
         newThesis.setThesisGroup(thesisGroupService.getThesisGroupById(thesisCreateRequest.getThesisGroup()));
         newThesis.setThesisUniversity(thesisUniversityService.getThesisUniversityById(thesisCreateRequest.getThesisUniversity()));
@@ -62,6 +62,7 @@ public class ThesisService {
         newThesis.setThesisMainField(thesisMainFieldService.getThesisMainFieldById(thesisCreateRequest.getThesisMainField()));
         newThesis.setThesisChildrenField(thesisChildrenFieldService.getThesisChildrenFieldById(thesisCreateRequest.getThesisChildrenField()));
         newThesis.setThesisType(thesisTypeService.getThesisTypeById(thesisCreateRequest.getThesisType()));
+        newThesis.setThesisWrittenYear(thesisCreateRequest.getThesisWrittenYear());
         newThesis.setThesisFile(file);
 
         thesisRepository.save(newThesis);
@@ -75,7 +76,6 @@ public class ThesisService {
             Thesis thesis = foundThesis.get();
 
             thesis.setThesisTitle(thesisCreateRequest.getThesisTitle());
-            thesis.setThesisTopic(thesisCreateRequest.getThesisTopic());
             thesis.setThesisLanguage(thesisLanguageService.getThesisLanguageById(thesisCreateRequest.getThesisLanguage()));
             thesis.setThesisGroup(thesisGroupService.getThesisGroupById(thesisCreateRequest.getThesisGroup()));
             thesis.setThesisUniversity(thesisUniversityService.getThesisUniversityById(thesisCreateRequest.getThesisUniversity()));
@@ -83,6 +83,7 @@ public class ThesisService {
             thesis.setThesisMainField(thesisMainFieldService.getThesisMainFieldById(thesisCreateRequest.getThesisMainField()));
             thesis.setThesisChildrenField(thesisChildrenFieldService.getThesisChildrenFieldById(thesisCreateRequest.getThesisChildrenField()));
             thesis.setThesisType(thesisTypeService.getThesisTypeById(thesisCreateRequest.getThesisType()));
+            thesis.setThesisWrittenYear(thesisCreateRequest.getThesisWrittenYear());
             if (thesisCreateRequest.getThesisFile() != null) {
                 fileService.deleteFile(thesis.getThesisFile().getId(), thesis.getThesisFile().getFileId(), thesis.getThesisFile().getPreviewImageId());
                 File file = fileService.uploadFile(thesisCreateRequest.getThesisFile(), thesisCreateRequest.getUserId());
@@ -135,9 +136,6 @@ public class ThesisService {
         if (!Objects.equals(thesisSearchRequest.getThesisTitle(), "")) {
             criteria.and("thesisTitle").regex(thesisSearchRequest.getThesisTitle());
         }
-        if (!Objects.equals(thesisSearchRequest.getThesisTopic(), "")) {
-            criteria.and("thesisTopic").regex(thesisSearchRequest.getThesisTopic());
-        }
         if (!Objects.equals(thesisSearchRequest.getThesisLanguage(), "")) {
             criteria.and("thesisLanguageId").is(thesisSearchRequest.getThesisLanguage());
         }
@@ -159,6 +157,9 @@ public class ThesisService {
         if (!Objects.equals(thesisSearchRequest.getThesisType(), "")) {
             criteria.and("thesisTypeId").is(thesisSearchRequest.getThesisType());
         }
+        if (!Objects.equals(thesisSearchRequest.getThesisWrittenYear(), "")) {
+            criteria.and("thesisWrittenYear").is(thesisSearchRequest.getThesisWrittenYear());
+        }
 
         Query query = new Query(criteria);
 
@@ -166,5 +167,30 @@ public class ThesisService {
         List<ThesisDto> thesisDtoList = thesisList.stream().map(thesis -> new ThesisDto(thesis)).collect(Collectors.toList());
         return new ResponseEntity<>(thesisDtoList, HttpStatus.OK);
 
+    }
+
+    public ResponseEntity<List<ThesisDto>> searchThesisBasic(String generalSeachWord) {
+        Pattern pattern = Pattern.compile(generalSeachWord, Pattern.CASE_INSENSITIVE);
+        Criteria criteria = new Criteria();
+        criteria.orOperator(
+                Criteria.where("thesisTitle").regex(pattern),
+                Criteria.where("thesisLanguage.thesisLanguageName").regex(pattern),
+                Criteria.where("thesisGroup.thesisGroupName").regex(pattern),
+                Criteria.where("thesisUniversity.thesisUniversityName").regex(pattern),
+                Criteria.where("thesisInstitute.thesisInstituteName").regex(pattern),
+                Criteria.where("thesisMainField.thesisMainFieldName").regex(pattern),
+                Criteria.where("thesisType.thesisTypeName").regex(pattern),
+                Criteria.where("thesisChildrenField.thesisChildrenFieldName").regex(pattern),
+                Criteria.where("thesisWrittenYear").regex(pattern),
+                Criteria.where("thesisFile.uploadDate").regex(pattern),
+                Criteria.where("thesisFile.user.userName").regex(pattern),
+                Criteria.where("thesisFile.user.userSurname").regex(pattern)
+        );
+
+        Query query = new Query(criteria);
+
+        List<Thesis> thesisList = mongoTemplate.find(query, Thesis.class);
+        List<ThesisDto> thesisDtoList = thesisList.stream().map(thesis -> new ThesisDto(thesis)).collect(Collectors.toList());
+        return new ResponseEntity<>(thesisDtoList, HttpStatus.OK);
     }
 }

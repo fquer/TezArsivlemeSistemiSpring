@@ -54,7 +54,12 @@ public class ThesisController {
     }
 
     @PostMapping("/findThesis")
-    public ResponseEntity<List<ThesisDto>> getLastCountThesis(@RequestBody ThesisSearchRequest thesisSearchRequest) {
+    public ResponseEntity<List<ThesisDto>> searchThesis(@RequestBody ThesisSearchRequest thesisSearchRequest) {
         return thesisService.searchThesis(thesisSearchRequest);
+    }
+
+    @GetMapping("/findThesisBasic")
+    public ResponseEntity<List<ThesisDto>> searchThesisBasic(@RequestParam("generalSearchWord") String generalSearchWord) {
+        return thesisService.searchThesisBasic(generalSearchWord);
     }
 }

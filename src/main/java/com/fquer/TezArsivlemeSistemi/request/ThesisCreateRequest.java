@@ -6,7 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class ThesisCreateRequest {
     private String thesisTitle;
-    private String thesisTopic;
     private String thesisLanguage;
     private String thesisGroup;
     private String thesisUniversity;
@@ -14,6 +13,7 @@ public class ThesisCreateRequest {
     private String thesisMainField;
     private String thesisChildrenField;
     private String thesisType;
+    private String thesisWrittenYear;
     private MultipartFile thesisFile;
     private String userId;
 }

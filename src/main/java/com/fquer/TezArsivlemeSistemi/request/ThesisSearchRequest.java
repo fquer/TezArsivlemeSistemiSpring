@@ -6,7 +6,6 @@ import lombok.Data;
 public class ThesisSearchRequest {
     private String thesisId;
     private String thesisTitle;
-    private String thesisTopic;
     private String thesisLanguage;
     private String thesisGroup;
     private String thesisUniversity;
@@ -14,4 +13,5 @@ public class ThesisSearchRequest {
     private String thesisMainField;
     private String thesisChildrenField;
     private String thesisType;
+    private String thesisWrittenYear;
 }

@@ -27,11 +27,7 @@ public class UserController {
 
     @PostMapping(value = "/add")
     public ResponseEntity<Void> createUser(@RequestBody UserRequest newUserRequest) {
-        User user = userService.createUser(newUserRequest);
-        if (user != null) {
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return userService.createUser(newUserRequest);
     }
 
     @PostMapping(value = "/login")

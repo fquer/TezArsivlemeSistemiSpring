@@ -6,7 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class ThesisUpdateRequest {
     private String thesisTitle;
-    private String thesisTopic;
     private String thesisLanguage;
     private String thesisGroup;
     private String thesisUniversity;
