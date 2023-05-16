@@ -17,4 +17,5 @@ public class User {
     @OneToOne
     private UserType userType;
     private String userPassword;
+    private String passwordResetGUID;
 }

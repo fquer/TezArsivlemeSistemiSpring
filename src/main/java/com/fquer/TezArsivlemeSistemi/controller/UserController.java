@@ -35,4 +35,13 @@ public class UserController {
         return userService.checkUserLogin(userLoginRequest);
     }
 
+    @GetMapping(value = "/resetPassword")
+    public ResponseEntity<Void> resetPassword(@RequestParam String email) {
+        return userService.resetPassword(email);
+    }
+
+    @GetMapping(value = "/resetPasswordWithToken")
+    public ResponseEntity<Void> resetPasswordWithToken(@RequestParam String token, @RequestParam String newPassword) {
+        return userService.resetPasswordWithToken(token, newPassword);
+    }
 }
