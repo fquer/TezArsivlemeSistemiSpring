@@ -101,4 +101,14 @@ public class UserService {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
+
+    public ResponseEntity<Void> resetPasswordCheckToken(String token) {
+        User foundedUser = userRepository.findByPasswordResetGUID(token);
+        if (foundedUser != null) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
 }

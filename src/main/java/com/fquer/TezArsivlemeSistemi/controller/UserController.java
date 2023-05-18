@@ -44,4 +44,9 @@ public class UserController {
     public ResponseEntity<Void> resetPasswordWithToken(@RequestParam String token, @RequestParam String newPassword) {
         return userService.resetPasswordWithToken(token, newPassword);
     }
+
+    @GetMapping(value = "/resetPasswordCheckToken")
+    public ResponseEntity<Void> resetPasswordCheckToken(@RequestParam String token) {
+        return userService.resetPasswordCheckToken(token);
+    }
 }

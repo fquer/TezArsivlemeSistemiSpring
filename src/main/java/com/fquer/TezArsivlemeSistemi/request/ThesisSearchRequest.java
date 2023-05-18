@@ -14,4 +14,5 @@ public class ThesisSearchRequest {
     private String thesisChildrenField;
     private String thesisType;
     private String thesisWrittenYear;
+    private String thesisAdvisor;
 }

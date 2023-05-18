@@ -27,6 +27,7 @@ public class Thesis {
     @OneToOne
     private ThesisType thesisType;
     private String thesisWrittenYear;
+    private String thesisAdvisor;
     @OneToOne
     @JoinColumn(name = "thesisFileId", nullable = false)
     private File thesisFile;

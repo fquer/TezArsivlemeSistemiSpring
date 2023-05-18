@@ -8,8 +8,10 @@ import com.fquer.TezArsivlemeSistemi.repository.ThesisRepository;
 import com.fquer.TezArsivlemeSistemi.request.ThesisCreateRequest;
 import com.fquer.TezArsivlemeSistemi.request.ThesisSearchRequest;
 import com.fquer.TezArsivlemeSistemi.service.thesisDetail.*;
+import com.mongodb.client.model.CollationStrength;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
@@ -17,12 +19,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 @Service
 public class ThesisService {
 
@@ -63,6 +65,7 @@ public class ThesisService {
         newThesis.setThesisChildrenField(thesisChildrenFieldService.getThesisChildrenFieldById(thesisCreateRequest.getThesisChildrenField()));
         newThesis.setThesisType(thesisTypeService.getThesisTypeById(thesisCreateRequest.getThesisType()));
         newThesis.setThesisWrittenYear(thesisCreateRequest.getThesisWrittenYear());
+        newThesis.setThesisAdvisor(thesisCreateRequest.getThesisAdvisor());
         newThesis.setThesisFile(file);
 
         thesisRepository.save(newThesis);
@@ -84,6 +87,7 @@ public class ThesisService {
             thesis.setThesisChildrenField(thesisChildrenFieldService.getThesisChildrenFieldById(thesisCreateRequest.getThesisChildrenField()));
             thesis.setThesisType(thesisTypeService.getThesisTypeById(thesisCreateRequest.getThesisType()));
             thesis.setThesisWrittenYear(thesisCreateRequest.getThesisWrittenYear());
+            thesis.setThesisAdvisor(thesisCreateRequest.getThesisAdvisor());
             if (thesisCreateRequest.getThesisFile() != null) {
                 fileService.deleteFile(thesis.getThesisFile().getId(), thesis.getThesisFile().getFileId(), thesis.getThesisFile().getPreviewImageId());
                 File file = fileService.uploadFile(thesisCreateRequest.getThesisFile(), thesisCreateRequest.getUserId());
@@ -134,10 +138,13 @@ public class ThesisService {
         Criteria criteria = new Criteria();
 
         if (!Objects.equals(thesisSearchRequest.getThesisTitle(), "")) {
-            criteria.and("thesisTitle").regex(thesisSearchRequest.getThesisTitle());
+            criteria.and("thesisTitle").regex(Pattern.compile(thesisSearchRequest.getThesisTitle(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE ));
         }
         if (!Objects.equals(thesisSearchRequest.getThesisLanguage(), "")) {
             criteria.and("thesisLanguageId").is(thesisSearchRequest.getThesisLanguage());
+        }
+        if (!Objects.equals(thesisSearchRequest.getThesisAdvisor(), "")) {
+            criteria.and("thesisAdvisor").regex(Pattern.compile(thesisSearchRequest.getThesisAdvisor(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE ));
         }
         if (!Objects.equals(thesisSearchRequest.getThesisGroup(), "")) {
             criteria.and("thesisGroupId").is(thesisSearchRequest.getThesisGroup());
@@ -161,6 +168,7 @@ public class ThesisService {
             criteria.and("thesisWrittenYear").is(thesisSearchRequest.getThesisWrittenYear());
         }
 
+
         Query query = new Query(criteria);
 
         List<Thesis> thesisList = mongoTemplate.find(query, Thesis.class);
@@ -182,6 +190,7 @@ public class ThesisService {
                 Criteria.where("thesisType.thesisTypeName").regex(pattern),
                 Criteria.where("thesisChildrenField.thesisChildrenFieldName").regex(pattern),
                 Criteria.where("thesisWrittenYear").regex(pattern),
+                Criteria.where("thesisAdvisor").regex(pattern),
                 Criteria.where("thesisFile.uploadDate").regex(pattern),
                 Criteria.where("thesisFile.user.userName").regex(pattern),
                 Criteria.where("thesisFile.user.userSurname").regex(pattern)

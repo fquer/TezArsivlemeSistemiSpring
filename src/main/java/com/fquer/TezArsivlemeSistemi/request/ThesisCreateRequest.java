@@ -14,6 +14,7 @@ public class ThesisCreateRequest {
     private String thesisChildrenField;
     private String thesisType;
     private String thesisWrittenYear;
+    private String thesisAdvisor;
     private MultipartFile thesisFile;
     private String userId;
 }

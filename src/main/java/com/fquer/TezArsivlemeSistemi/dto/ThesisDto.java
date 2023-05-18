@@ -22,6 +22,7 @@ public class ThesisDto {
     private FileDto thesisFile;
     private LocalDateTime thesisUploadDate;
     private String thesisWrittenYear;
+    private String thesisAdvisor;
     private UserDto user;
 
     public ThesisDto(Thesis thesis) {
@@ -37,6 +38,7 @@ public class ThesisDto {
         this.thesisFile = new FileDto(thesis.getThesisFile());
         this.thesisUploadDate = thesis.getThesisFile().getUploadDate();
         this.thesisWrittenYear = thesis.getThesisWrittenYear();
+        this.thesisAdvisor = thesis.getThesisAdvisor();
         this.user = new UserDto(thesis.getThesisFile().getUser());
     }
 }
