@@ -3,7 +3,6 @@ package com.fquer.TezArsivlemeSistemi.service;
 import com.fquer.TezArsivlemeSistemi.dto.UserDto;
 import com.fquer.TezArsivlemeSistemi.exception.NotFoundException;
 import com.fquer.TezArsivlemeSistemi.model.User;
-import com.fquer.TezArsivlemeSistemi.model.UserType;
 import com.fquer.TezArsivlemeSistemi.repository.UserRepository;
 import com.fquer.TezArsivlemeSistemi.request.UserLoginRequest;
 import com.fquer.TezArsivlemeSistemi.request.UserRequest;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,8 +20,6 @@ import java.util.UUID;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private UserTypeService userTypeService;
 
     private  JavaMailSender mailSender;
 
@@ -37,12 +33,10 @@ public class UserService {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         else {
-            UserType userType = userTypeService.getUserTypeById(newUserRequest.getUserTypeId());
             User newUser = new User();
             newUser.setUserName(newUserRequest.getUserName());
             newUser.setUserSurname(newUserRequest.getUserSurname());
             newUser.setUserMail(newUserRequest.getUserMail());
-            newUser.setUserType(userType);
             newUser.setUserPassword(newUserRequest.getUserPassword());
             User createdUser = userRepository.save(newUser);
             if (createdUser != null) {

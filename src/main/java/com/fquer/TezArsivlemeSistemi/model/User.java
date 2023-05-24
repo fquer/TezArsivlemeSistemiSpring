@@ -14,8 +14,6 @@ public class User {
     private String userName;
     private String userSurname;
     private String userMail;
-    @OneToOne
-    private UserType userType;
     private String userPassword;
     private String passwordResetGUID;
 }
